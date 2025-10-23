@@ -1,12 +1,14 @@
+
+
+
 # Install
 
 pip install -U python-jobspy
 
-#There are 2 sections, one for the Base code and the other one to filter just entry level positions.
 
-# Modify Values
+**There are 2 sections, one for the Base code and the other one to filter just entry level positions.**
 
-Modify the values from the step 1 section and add the search tearm , location and number of results.
+
 
 # Entry Level
 
@@ -14,7 +16,10 @@ from jobspy import scrape_jobs
 import pandas as pd
 import csv
 
-#Step 1: scrape
+
+### Modify Values
+Modify the values from the #step 1 section and add the search tearm , location and number of results.
+
 ```
 df = scrape_jobs(
     site_name=["linkedin", "indeed" ],
@@ -26,25 +31,25 @@ df = scrape_jobs(
 
 print("Columns:", df.columns)
 ```
-#Step 2: define description keywords
+### Step 2: define description keywords
 
 ```
 keywords = ["vpn", "tcp", "wan", "lan", "ip", "cloud", "vmware", "cisco"]
 pattern = "|".join(keywords)
 
 ```
-#Step 3: find description column
+### Step 3: find description column
 ```
 desc_col = next((c for c in df.columns if "desc" in c.lower()), None)
 if not desc_col:
     raise ValueError("No description column found!")
 ```
-#Step 4: filter by description content
+### Step 4: filter by description content
 ```
 filtered_df = df[df[desc_col].astype(str).str.contains(pattern, case=False, na=False)]
 ```
 
-#Step 5: filter by entry-level job level (when available)
+### Step 5: filter by entry-level job level (when available)
 
 ```
 if "job_level" in filtered_df.columns:
@@ -55,19 +60,21 @@ if "job_level" in filtered_df.columns:
     ]
 ```
 
-#Step 6: pick link column (LinkedIn has both job_url and job_url_direct)
+### Step 6: pick link column (LinkedIn has both job_url and job_url_direct)
 
 ```
 link_col = "job_url_direct" if "job_url_direct" in df.columns else "job_url"
 ```
 
+
+### Step 7: show only the first few for console readability
+
 ```
-#Step 7: show only the first few for console readability
 pd.set_option("display.max_colwidth", 120)
 print(filtered_df[["title", "company", link_col, desc_col]].head())
 ```
 
-#Step 8: save to CSV with full description text
+### Step 8: save to CSV with full description text
 ```
 filtered_df.to_csv("jobs_filtered_entry_level.csv", index=False, quoting=csv.QUOTE_ALL, encoding="utf-8")
 print(f"\n✅ Saved {len(filtered_df)} filtered entry-level jobs to jobs_filtered_entry_level.csv")
