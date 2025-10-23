@@ -1,3 +1,4 @@
+import jobspy
 from jobspy import scrape_jobs
 import pandas as pd
 import csv
